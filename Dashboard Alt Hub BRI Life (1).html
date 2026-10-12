@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alt Hub - BRI Life Alternate Division</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        bri: {
+                            blue: '#00529C',
+                            orange: '#F15A24',
+                            darkBlue: '#003366',
+                            lightBg: '#F4F7FA',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 antialiased bg-slate-50 flex flex-col min-h-screen">
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-in-out max-w-md w-full bg-white rounded-xl shadow-2xl border border-slate-100 p-4 flex items-center gap-3 hidden">
+        <div id="toastIcon" class="p-2 rounded-lg text-white bg-bri-blue">
+            <i data-lucide="info" class="w-5 h-5"></i>
+        </div>
+        <div class="flex-1">
+            <h4 id="toastTitle" class="text-sm font-bold text-slate-800">Notifikasi</h4>
+            <p id="toastMessage" class="text-xs text-slate-600">Pesan notifikasi sistem.</p>
+        </div>
+        <button onclick="closeToast()" class="text-slate-400 hover:text-slate-600 p-1">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    </div>
+
+    <!-- AUTH GATEWAY PAGE -->
+    <div id="authPage" class="fixed inset-0 z-40 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4 min-h-screen overflow-y-auto">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-100 my-auto">
+            
+            <!-- Auth Header -->
+            <div class="bg-gradient-to-r from-bri-blue via-blue-700 to-bri-darkBlue p-8 text-center text-white relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+                <div class="flex justify-center mb-3">
+                    <div class="bg-white p-3 rounded-2xl shadow-md inline-flex items-center justify-center">
+                        <span class="font-extrabold text-2xl tracking-tighter text-bri-blue">BRI<span class="text-bri-orange">Life</span></span>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold tracking-tight">Alt Hub Division</h2>
+                <p class="text-xs text-blue-100 mt-1 font-medium">Portal Terpadu Informasi, Layanan & Canva Hub</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="flex border-b border-slate-200 bg-slate-50">
+                <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="flex-1 py-3.5 text-sm font-bold text-bri-blue border-b-2 border-bri-blue bg-white transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Masuk
+                </button>
+                <button id="tabRegisterBtn" onclick="switchAuthTab('register')" class="flex-1 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i> Registrasi
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-6 sm:p-8">
+                <!-- FORM LOGIN -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">NIP / Email Pekerja</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="loginId" required placeholder="Contoh: 88472910 atau user@brilife.co.id" class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-bri-blue focus:border-bri-blue outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Kata Sandi</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-bri-blue focus:border-bri-blue outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between text-xs">
+                        <label class="flex items-center gap-2 text-slate-600 cursor-pointer">
+                            <input type="checkbox" class="rounded text-bri-blue focus:ring-bri-blue"> Remember Me
+                        </label>
+                        <a href="javascript:void(0)" onclick="showNotification('Silahkan hubungi tim IT Helpdesk BRI Life', 'info')" class="text-bri-blue hover:underline font-semibold">Lupa Password?</a>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-bri-blue hover:bg-bri-darkBlue text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 text-sm mt-2">
+                        <span>Masuk ke Dashboard</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+
+                <!-- FORM REGISTER -->
+                <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                        <input type="text" id="regName" required placeholder="Nama lengkap sesuai NIP" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-bri-blue outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">NIP Pekerja / ID Agen</label>
+                        <input type="text" id="regNip" required placeholder="Nomor Induk Pegawai" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-bri-blue outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Corporate</label>
+                        <input type="email" id="regEmail" required placeholder="nama@brilife.co.id" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-bri-blue outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Kata Sandi Baru</label>
+                        <input type="password" id="regPassword" required placeholder="Min. 8 karakter" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-bri-blue outline-none">
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-bri-orange hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 text-sm mt-2">
+                        <i data-lucide="user-check" class="w-4 h-4"></i>
+                        <span>Daftar Akun Baru</span>
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-slate-400 mt-6">
+                    © 2026 PT Asuransi BRI Life - Alternate Division. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div id="mainDashboard" class="flex-1 flex flex-col">
+
+        <!-- Top Header Navigation -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    
+                    <!-- Logo & Brand -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="bg-bri-blue text-white p-2 rounded-xl font-black text-lg tracking-tighter">
+                                BRI<span class="text-bri-orange">Life</span>
+                            </div>
+                            <div>
+                                <h1 class="text-base font-extrabold text-slate-900 leading-none">ALT HUB</h1>
+                                <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Alternate Division</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Navigation Tabs (Desktop) -->
+                    <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                        <button id="navBtn-berandaSec" onclick="switchSection('berandaSec')" class="nav-tab-btn px-4 py-2 text-xs font-bold rounded-lg text-bri-blue bg-white shadow-sm transition-all flex items-center gap-2">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Beranda
+                        </button>
+                        <button id="navBtn-aroSec" onclick="switchSection('aroSec')" class="nav-tab-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:text-bri-blue rounded-lg transition-all flex items-center gap-2">
+                            <i data-lucide="users" class="w-4 h-4"></i> Layanan ARO
+                        </button>
+                        <button id="navBtn-productSec" onclick="switchSection('productSec')" class="nav-tab-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:text-bri-blue rounded-lg transition-all flex items-center gap-2">
+                            <i data-lucide="box" class="w-4 h-4"></i> Produk Alternatif
+                        </button>
+                        <button id="navBtn-canvaSec" onclick="switchSection('canvaSec')" class="nav-tab-btn px-4 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 rounded-lg transition-all flex items-center gap-2">
+                            <i data-lucide="palette" class="w-4 h-4 text-rose-500"></i> Canva Hub
+                        </button>
+                        <button id="navBtn-edukasiSec" onclick="switchSection('edukasiSec')" class="nav-tab-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:text-bri-blue rounded-lg transition-all flex items-center gap-2">
+                            <i data-lucide="book-open" class="w-4 h-4"></i> Edukasi
+                        </button>
+                    </nav>
+
+                    <!-- User Profile & Hamburger Trigger -->
+                    <div class="flex items-center gap-3">
+                        <div class="hidden sm:flex items-center gap-2 text-right">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 text-bri-blue flex items-center justify-center font-bold text-xs border border-blue-200" id="userAvatar">
+                                AD
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800 leading-tight" id="userNameDisplay">Admin Alternate</p>
+                                <p class="text-[10px] text-slate-500">Divisi Alternate</p>
+                            </div>
+                        </div>
+                        <button onclick="handleLogout()" class="hidden md:flex p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all" title="Keluar">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+
+                        <!-- Hamburger Button (Mobile Nav Toggle) -->
+                        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-700 hover:bg-slate-100 rounded-xl focus:outline-none transition-colors">
+                            <i id="hamburgerIcon" data-lucide="menu" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Mobile Navigation Drawer Dropdown -->
+            <div id="mobileMenu" class="md:hidden hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-2 shadow-lg">
+                <button onclick="switchSection('berandaSec'); toggleMobileMenu();" class="mobile-nav-btn w-full px-4 py-2.5 text-left text-xs font-bold rounded-xl text-bri-blue bg-blue-50 flex items-center gap-3">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Beranda
+                </button>
+                <button onclick="switchSection('aroSec'); toggleMobileMenu();" class="mobile-nav-btn w-full px-4 py-2.5 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl flex items-center gap-3">
+                    <i data-lucide="users" class="w-4 h-4"></i> Layanan ARO
+                </button>
+                <button onclick="switchSection('productSec'); toggleMobileMenu();" class="mobile-nav-btn w-full px-4 py-2.5 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl flex items-center gap-3">
+                    <i data-lucide="box" class="w-4 h-4"></i> Produk Alternatif
+                </button>
+                <button onclick="switchSection('canvaSec'); toggleMobileMenu();" class="mobile-nav-btn w-full px-4 py-2.5 text-left text-xs font-semibold text-rose-700 bg-rose-50 rounded-xl flex items-center gap-3">
+                    <i data-lucide="palette" class="w-4 h-4 text-rose-500"></i> Canva Hub
+                </button>
+                <button onclick="switchSection('edukasiSec'); toggleMobileMenu();" class="mobile-nav-btn w-full px-4 py-2.5 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-xl flex items-center gap-3">
+                    <i data-lucide="book-open" class="w-4 h-4"></i> Edukasi
+                </button>
+                
+                <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600 px-2">
+                    <span id="mobileUserNameDisplay" class="font-bold">Admin Alternate</span>
+                    <button onclick="handleLogout()" class="text-rose-600 font-bold flex items-center gap-1">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content View Container -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+            <!-- SECTION 1: BERANDA -->
+            <section id="berandaSec" class="content-section space-y-6">
+                <!-- Banner Welcome -->
+                <div class="bg-gradient-to-r from-bri-blue via-blue-800 to-bri-darkBlue rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl">
+                    <div class="absolute right-0 top-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="px-3 py-1 bg-white/10 text-blue-200 text-xs font-semibold rounded-full border border-white/20 inline-block mb-3">
+                            Internal Knowledge & Canva Asset Portal
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
+                            Selamat Datang di Portal <br><span class="text-bri-orange">Alternate Hub BRI Life</span>
+                        </h2>
+                        <p class="text-sm text-slate-200 mt-2 leading-relaxed">
+                            Pusat sinergi informasi layanan ARO, inovasi produk digital, serta integrasi langsung dengan template presentasi dan materi visual Canva Division.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- METRICS SUMMARY -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center gap-4">
+                        <div class="p-3.5 bg-blue-50 text-bri-blue rounded-xl">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cabang PNM</p>
+                            <div class="flex items-baseline gap-2 mt-0.5">
+                                <span class="text-2xl font-extrabold text-slate-900">53</span>
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Aktif</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shortcut Cards -->
+                    <div onclick="switchSection('canvaSec')" class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group">
+                        <div class="p-3.5 bg-rose-50 text-rose-600 rounded-xl group-hover:scale-105 transition-transform">
+                            <i data-lucide="palette" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Canva Templates</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5 group-hover:text-rose-600 transition-colors">Akses Desain <i data-lucide="chevron-right" class="w-4 h-4 inline-block ml-1"></i></p>
+                        </div>
+                    </div>
+
+                    <div onclick="switchSection('productSec')" class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group">
+                        <div class="p-3.5 bg-orange-50 text-bri-orange rounded-xl group-hover:scale-105 transition-transform">
+                            <i data-lucide="box" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Produk Alternatif</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5 group-hover:text-bri-blue transition-colors">MoDi & CoZy <i data-lucide="chevron-right" class="w-4 h-4 inline-block ml-1"></i></p>
+                        </div>
+                    </div>
+
+                    <div onclick="switchSection('edukasiSec')" class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center gap-4 cursor-pointer group">
+                        <div class="p-3.5 bg-indigo-50 text-indigo-600 rounded-xl group-hover:scale-105 transition-transform">
+                            <i data-lucide="book-open" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pusat Edukasi</p>
+                            <p class="text-sm font-bold text-slate-800 mt-0.5 group-hover:text-bri-blue transition-colors">SOP Gagal Debet <i data-lucide="chevron-right" class="w-4 h-4 inline-block ml-1"></i></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: LAYANAN ARO -->
+            <section id="aroSec" class="content-section space-y-8 hidden">
+                <div class="border-l-4 border-bri-blue pl-4">
+                    <h3 class="text-xl font-bold text-slate-900">Layanan Alternate Relationship Officer (ARO)</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Daftar lengkap penugasan Petugas ARO di 53 Kantor Cabang PNM beserta kelas cabang dan status aktifnya.</p>
+                </div>
+
+                <!-- SUBSECTION: Program Internal ARO -->
+                <div class="bg-slate-100/70 p-6 rounded-2xl border border-slate-200/80 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                        <div>
+                            <h4 class="text-base font-extrabold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="target" class="w-5 h-5 text-bri-orange"></i>
+                                Program Internal Alternate Relationship Officer
+                            </h4>
+                            <p class="text-xs text-slate-500 mt-0.5">Inisiatif strategis dan program kerja internal peningkatan kinerja pendampingan ARO.</p>
+                        </div>
+                        <span class="text-xs font-bold px-3 py-1 bg-blue-100 text-bri-blue rounded-full border border-blue-200 self-start sm:self-auto">
+                            Program ARO 2026
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Program Card 1: Reward Referral Asuransi -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="p-2 bg-blue-50 text-bri-blue rounded-lg">
+                                        <i data-lucide="gift" class="w-5 h-5"></i>
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">Berjalan</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-slate-800">Reward Referral Asuransi</h5>
+                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                        Program apresiasi insentif bagi ARO dan mitra referal yang berhasil merekomendasikan penutupan produk asuransi.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-slate-500">Total Hadiah Rp3,7 MILIAR</span>
+                                <button onclick="openProgramDetailModal('referral')" class="text-xs font-bold text-bri-blue hover:text-bri-darkBlue flex items-center gap-1">
+                                    Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Program Card 2: Reward Prima 2026 -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="p-2 bg-amber-50 text-amber-600 rounded-lg">
+                                        <i data-lucide="star" class="w-5 h-5"></i>
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full border border-amber-200">Program Utama 2026</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-slate-800">Reward Prima 2026</h5>
+                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                        Penghargaan khusus pelayanan prima dan efektivitas retensi polis nasabah cabang PNM sepanjang tahun 2026.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-slate-500">Kinerja SLA & Persistensi</span>
+                                <button onclick="openProgramDetailModal('prima')" class="text-xs font-bold text-bri-blue hover:text-bri-darkBlue flex items-center gap-1">
+                                    Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Program Card 3: ARO Companion -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                                        <i data-lucide="user-check" class="w-5 h-5"></i>
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-blue-50 text-bri-blue text-[10px] font-bold rounded-full border border-blue-200">Pendampingan</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-slate-800">ARO Companion</h5>
+                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                        Program mentorship dan pendampingan intensif dari Senior ARO ke petugas ARO cabang untuk optimalisasi kinerja.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-slate-500">Mentorship 53 Cabang</span>
+                                <button onclick="openProgramDetailModal('companion')" class="text-xs font-bold text-bri-blue hover:text-bri-darkBlue flex items-center gap-1">
+                                    Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Program Card 4: ARO Champions -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="p-2 bg-orange-50 text-bri-orange rounded-lg">
+                                        <i data-lucide="trophy" class="w-5 h-5"></i>
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-rose-50 text-rose-700 text-[10px] font-bold rounded-full border border-rose-200">Kompetisi Triwulan</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-slate-800">ARO Champions</h5>
+                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                        Ajang kompetisi pencapaian target dan akuisisi servis ARO terbaik tingkat nasional secara periodik.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-slate-500">Evaluasi Triwulanan</span>
+                                <button onclick="openProgramDetailModal('champions')" class="text-xs font-bold text-bri-blue hover:text-bri-darkBlue flex items-center gap-1">
+                                    Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Program Card 5: ARO Cash Reward -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-3">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                                        <i data-lucide="banknote" class="w-5 h-5"></i>
+                                    </span>
+                                    <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">Insentif Komunitas</span>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-bold text-slate-800">ARO Cash Reward</h5>
+                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                                        Bonus cash reward hingga Rp1.000.000/bulan dari kemitraan komunitas olahraga & produk ProSport.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-semibold text-slate-500">Komunitas & Event Sports</span>
+                                <button onclick="openProgramDetailModal('cashreward')" class="text-xs font-bold text-bri-blue hover:text-bri-darkBlue flex items-center gap-1">
+                                    Detail <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Filter & Search -->
+                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <div class="relative w-full sm:w-80">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="aroSearchInput" onkeyup="filterAroTable()" placeholder="Cari cabang atau nama ARO..." class="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-bri-blue outline-none">
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <select id="aroStatusFilter" onchange="filterAroTable()" class="px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white font-medium text-slate-600 focus:ring-2 focus:ring-bri-blue outline-none w-full sm:w-auto">
+                            <option value="ALL">Semua Kelas Cabang</option>
+                            <option value="Utama">Kelas Utama</option>
+                            <option value="Madya">Kelas Madya</option>
+                            <option value="Pratama">Kelas Pratama</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table Data ARO Servicing -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <tr>
+                                    <th class="p-4 w-16 text-center">No</th>
+                                    <th class="p-4">Cabang PNM</th>
+                                    <th class="p-4">Nama ARO Penanggung Jawab</th>
+                                    <th class="p-4">Kelas Cabang</th>
+                                    <th class="p-4 text-center">Status Keaktifan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="aroTableBody" class="divide-y divide-slate-200 text-sm">
+                                <!-- Dynamic content populates via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: PRODUK ALTERNATIF -->
+            <section id="productSec" class="content-section space-y-6 hidden">
+                <div class="border-l-4 border-bri-orange pl-4">
+                    <h3 class="text-xl font-bold text-slate-900">Produk Alternatif</h3>
+                    <p class="text-xs text-slate-500">Inovasi produk asuransi berbasis digital, mikrosyariah/mikro, & solusi perlindungan korporat.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- PRODUCT 1: MoDi -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="px-3 py-1 bg-blue-50 text-bri-blue rounded-lg font-black text-lg">
+                                    MoDi
+                                </div>
+                                <span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-full border border-amber-200">
+                                    Digital Protection
+                                </span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h4 class="text-lg font-extrabold text-slate-800">Mobile Digital Insurance</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    MODI (Mobile Digital Insurance) adalah produk asuransi digital dari PT Asuransi BRI Life yang dirancang untuk memberikan perlindungan jiwa, kecelakaan, dan kesehatan secara praktis, fleksibel, serta 100% online.
+                                </p>
+                            </div>
+
+                            <div class="space-y-2 pt-2 border-t border-slate-100">
+                                <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Karakteristik Utama MODI BRI Life:</h5>
+                                <ul class="text-xs text-slate-600 space-y-2">
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Akses Digital:</strong> Pendaftaran, pembelian, hingga klaim online.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Premi Terjangkau:</strong> Sangat ringan & fleksibel harian.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Pilihan Paket:</strong> MOsport, MOtraveling, MOreligi, dll.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-t border-slate-200">
+                            <button onclick="openModiDetailModal()" class="w-full py-2.5 bg-bri-blue hover:bg-bri-darkBlue text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="layers" class="w-4 h-4"></i>
+                                <span>Pelajari Fitur MoDi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT 2: AM Jiwa UMi -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg font-black text-lg">
+                                    AM Jiwa UMi
+                                </div>
+                                <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                                    Micro Insurance
+                                </span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h4 class="text-lg font-extrabold text-slate-800">Asuransi Mikro Jiwa UMi</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Perlindungan Asuransi Mikro Jiwa yang dirancang khusus untuk nasabah Holding Ultra Mikro (UMi) BRI, Pegadaian, dan PNM dengan proses mudah dan harga terjangkau.
+                                </p>
+                            </div>
+
+                            <div class="space-y-2 pt-2 border-t border-slate-100">
+                                <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Karakteristik AM Jiwa UMi:</h5>
+                                <ul class="text-xs text-slate-600 space-y-2">
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Proteksi Jiwa UMi:</strong> Manfaat santunan bagi nasabah & keluarga segmen mikro.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Proses Sederhana:</strong> Syarat pendaftaran dan klaim yang sangat efisien.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Sinergi Holding:</strong> Terintegrasi dalam ekosistem BRI, Pegadaian & PNM.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-t border-slate-200">
+                            <button onclick="openUmiModal()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="shield" class="w-4 h-4"></i>
+                                <span>Detail AM Jiwa UMi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PRODUCT 3: CoZy -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
+                        <div class="p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="px-3 py-1 bg-orange-50 text-bri-orange rounded-lg font-black text-lg">
+                                    CoZy
+                                </div>
+                                <span class="px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-bold rounded-full border border-purple-200">
+                                    Corporate B2B
+                                </span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h4 class="text-lg font-extrabold text-slate-800">Corporate Eazy</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed">
+                                    Asuransi Corporate Eazy (COZY) dari BRI Life adalah solusi asuransi kumpulan untuk minimal 50 peserta dengan premi terjangkau mulai dari Rp1.000 per orang.
+                                </p>
+                            </div>
+
+                            <div class="space-y-2 pt-2 border-t border-slate-100">
+                                <h5 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Fitur & Keunggulan CoZy:</h5>
+                                <ul class="text-xs text-slate-600 space-y-2">
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Perlindungan Komprehensif:</strong> Santunan meninggal & cacat tetap.</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5"></i>
+                                        <span><strong>Masa Fleksibel:</strong> Opsi perlindungan harian hingga tahunan.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-t border-slate-200">
+                            <button onclick="openCozyModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="building-2" class="w-4 h-4"></i>
+                                <span>Portal Mitra CoZy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECTION 4: CANVA HUB (NEW INTEGRATION) -->
+            <section id="canvaSec" class="content-section space-y-8 hidden">
+                <div class="border-l-4 border-rose-500 pl-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <span>Canva Asset & Presentation Hub</span>
+                            <span class="px-2.5 py-0.5 bg-rose-50 text-rose-600 text-xs font-bold rounded-full border border-rose-200">Official Integration</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Akses cepat template presentasi ARO, banner sosialisasi program, dan materi promosi produk di Canva.</p>
+                    </div>
+                    <a href="https://www.canva.com" target="_blank" class="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 self-start sm:self-auto">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        <span>Buka Canva Workspace</span>
+                    </a>
+                </div>
+
+                <!-- Canva Featured Projects Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Canva Item 1 -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between group">
+                        <div class="p-6 space-y-4">
+                            <div class="aspect-video bg-gradient-to-br from-rose-500 via-pink-600 to-purple-700 rounded-xl p-4 text-white flex flex-col justify-between relative overflow-hidden group-hover:scale-[1.02] transition-transform">
+                                <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                                <div class="flex justify-between items-start">
+                                    <span class="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-md text-[10px] font-bold">Presentation</span>
+                                    <span class="p-1.5 bg-white text-rose-600 rounded-lg shadow"><i data-lucide="palette" class="w-4 h-4"></i></span>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-extrabold leading-snug">Deck Pitching ARO & Program 2026</h4>
+                                    <p class="text-[10px] text-rose-100 mt-0.5">Template Resmi Sosialisasi Cabang</p>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Template presentasi interaktif untuk kunjungan cabang PNM dan pemaparan program reward ARO 2026.
+                            </p>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                            <span class="text-[11px] font-semibold text-slate-500">Diperbarui: Kemarin</span>
+                            <button onclick="openCanvaModal('Deck Pitching ARO 2026', 'https://www.canva.com')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit di Canva
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canva Item 2 -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between group">
+                        <div class="p-6 space-y-4">
+                            <div class="aspect-video bg-gradient-to-br from-bri-blue via-blue-600 to-indigo-700 rounded-xl p-4 text-white flex flex-col justify-between relative overflow-hidden group-hover:scale-[1.02] transition-transform">
+                                <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                                <div class="flex justify-between items-start">
+                                    <span class="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-md text-[10px] font-bold">Social Media</span>
+                                    <span class="p-1.5 bg-white text-bri-blue rounded-lg shadow"><i data-lucide="image" class="w-4 h-4"></i></span>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-extrabold leading-snug">Banner Promo MoDi & CoZy</h4>
+                                    <p class="text-[10px] text-blue-100 mt-0.5">Feed & Story Instagram / WA Group</p>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Kumpulan aset desain poster digital untuk edukasi produk asuransi mikro dan korporat di grup unit Mekaar.
+                            </p>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                            <span class="text-[11px] font-semibold text-slate-500">Diperbarui: 3 hari lalu</span>
+                            <button onclick="openCanvaModal('Banner Promo MoDi & CoZy', 'https://www.canva.com')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit di Canva
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canva Item 3 -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between group">
+                        <div class="p-6 space-y-4">
+                            <div class="aspect-video bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 rounded-xl p-4 text-white flex flex-col justify-between relative overflow-hidden group-hover:scale-[1.02] transition-transform">
+                                <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                                <div class="flex justify-between items-start">
+                                    <span class="px-2 py-0.5 bg-white/20 backdrop-blur-md rounded-md text-[10px] font-bold">Infographic</span>
+                                    <span class="p-1.5 bg-white text-emerald-700 rounded-lg shadow"><i data-lucide="bar-chart" class="w-4 h-4"></i></span>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-extrabold leading-snug">Infografis SOP Gagal Debet</h4>
+                                    <p class="text-[10px] text-emerald-100 mt-0.5">Panduan Visual Penanganan Polis</p>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Infografis ringkas langkah-langkah penanganan kegagalan pembayaran premi untuk panduan petugas lapangan.
+                            </p>
+                        </div>
+
+                        <div class="p-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+                            <span class="text-[11px] font-semibold text-slate-500">Diperbarui: Minggu lalu</span>
+                            <button onclick="openCanvaModal('Infografis SOP Gagal Debet', 'https://www.canva.com')" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center gap-1.5">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit di Canva
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Brand Kit Quick Embed Section -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <h4 class="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="shield" class="w-5 h-5 text-bri-blue"></i>
+                        <span>BRI Life Brand Kit & Guidelines untuk Canva</span>
+                    </h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Gunakan kode warna resmi dan font panduan perusahaan saat mendesain materi sosialisasi Divisi Alternate di Canva:
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-[#00529C] shadow"></div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">BRI Blue</p>
+                                <p class="text-[10px] text-slate-500 font-mono">#00529C</p>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-[#F15A24] shadow"></div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">BRI Orange</p>
+                                <p class="text-[10px] text-slate-500 font-mono">#F15A24</p>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-[#003366] shadow"></div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">Dark Blue</p>
+                                <p class="text-[10px] text-slate-500 font-mono">#003366</p>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-[#F4F7FA] border border-slate-300 shadow"></div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">Light BG</p>
+                                <p class="text-[10px] text-slate-500 font-mono">#F4F7FA</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: EDUKASI -->
+            <section id="edukasiSec" class="content-section space-y-6 hidden">
+                <div class="border-l-4 border-rose-500 pl-4">
+                    <h3 class="text-xl font-bold text-slate-900">Pusat Edukasi & Penanganan Gagal Debet</h3>
+                    <p class="text-xs text-slate-500">Panduan standar operasional untuk mencegah dan menangani kegagalan pembayaran premi auto-debet.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Edu Card 1 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800">Penyebab Utama Gagal Debet</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Saldo rekening tidak mencukupi saat tanggal jatuh tempo, rekening pasif/dormant, atau masa berlaku kartu/rekening kadaluarsa.
+                        </p>
+                    </div>
+
+                    <!-- Edu Card 2 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800">Pencegahan Policy Lapse</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Avisasi nasabah H-3 sebelum jadwal autodebet, pastikan saldo mengendap cukup, dan perbarui data nomor rekening secara berkala.
+                        </p>
+                    </div>
+
+                    <!-- Edu Card 3 -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800">Langkah Penagihan Ulang</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Gunakan fasilitas bayar via BRImo atau tawarkan opsi pendebetan ulang (*retry debet*) pada siklus berikutnya.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-white/10 rounded-xl">
+                            <i data-lucide="file-text" class="w-6 h-6 text-bri-orange"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold">Unduh Standard Operating Procedure (SOP) Edukasi Gagal Debet</h4>
+                            <p class="text-xs text-slate-300">Dokumen lengkap alur komunikasi dan mitigasi risiko kelangsungan polis nasabah.</p>
+                        </div>
+                    </div>
+                    <button onclick="openEducationModal()" class="whitespace-nowrap px-4 py-2.5 bg-bri-orange hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow transition-all">
+                        Buka SOP Lengkap
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+            <div class="max-w-7xl mx-auto px-4">
+                <p>© 2026 PT Asuransi BRI Life - Alternate Division. Seluruh Hak Cipta Dilindungi Undang-Undang.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- MODALS SECTION -->
+
+    <!-- Modal Canva Integration Preview -->
+    <div id="canvaModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar space-y-5">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
+                        <i data-lucide="palette" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 id="canvaModalTitle" class="text-lg font-extrabold text-slate-800">Integrasi Canva</h3>
+                        <p class="text-xs text-slate-500">Buka template langsung di workspace Canva Division</p>
+                    </div>
+                </div>
+                <button onclick="closeCanvaModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-4 bg-rose-50/70 border border-rose-200 rounded-xl space-y-2">
+                <div class="flex items-center gap-2 text-rose-800 font-bold text-xs">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                    <span>Akses Kolaborasi Desain Tim</span>
+                </div>
+                <p class="text-xs text-slate-700 leading-relaxed">
+                    Anda akan diarahkan ke editor Canva resmi PT Asuransi BRI Life. Pastikan akun Canva Corporate atau tim Anda sudah masuk untuk melakukan pengeditan kolaboratif.
+                </p>
+            </div>
+
+            <div class="space-y-2 text-xs text-slate-600">
+                <p class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">Langkah Penggunaan:</p>
+                <ol class="list-decimal pl-4 space-y-1.5">
+                    <li>Klik tombol <strong>"Buka Template di Canva"</strong> di bawah ini.</li>
+                    <li>Gunakan tombol <em>"Use template for new design"</em> di Canva.</li>
+                    <li>Sesuaikan konten teks atau visual sesuai kebutuhan cabang Anda.</li>
+                </ol>
+            </div>
+
+            <div class="mt-6 flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+                <button onclick="closeCanvaModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors">
+                    Batal
+                </button>
+                <a id="canvaLinkBtn" href="https://www.canva.com" target="_blank" onclick="closeCanvaModal()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition-all flex items-center gap-2">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                    <span>Buka Template di Canva</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail MoDi 6 Section -->
+    <div id="modiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-4 mb-5">
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-1 bg-blue-100 text-bri-blue rounded-lg font-black text-xl">
+                        MoDi
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-800">6 Kategori Perlindungan MoDi</h3>
+                        <p class="text-xs text-slate-500">Mobile Digital Insurance Options</p>
+                    </div>
+                </div>
+                <button onclick="closeModiModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- 1. MOsport -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <div class="flex items-center gap-2 text-bri-blue font-bold text-sm">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                        <span>1. MOsport</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Proteksi khusus untuk aktivitas olahraga, kebugaran, dan kegiatan fisik kompetitif maupun rekreasi.
+                    </p>
+                </div>
+
+                <!-- 2. MOactivity -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <div class="flex items-center gap-2 text-bri-blue font-bold text-sm">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                        <span>2. MOactivity</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Perlindungan harian untuk menemani berbagai aktivitas dan hobi rutin Anda di luar ruangan maupun dalam ruangan.
+                    </p>
+                </div>
+
+                <!-- 3. MOevent -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <div class="flex items-center gap-2 text-bri-blue font-bold text-sm">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>3. MOevent</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Asuransi praktis saat menghadiri acara, konser musik, pameran, maupun festival keramaian publik.
+                    </p>
+                </div>
+
+                <!-- 4. MOreligi -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <div class="flex items-center gap-2 text-bri-blue font-bold text-sm">
+                        <i data-lucide="moon" class="w-4 h-4"></i>
+                        <span>4. MOreligi</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Solusi perlindungan perjalanan ibadah spiritual, umrah, haji plus, maupun ziarah religi dengan aman.
+                    </p>
+                </div>
+
+                <!-- 5. MOsafety -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <div class="flex items-center gap-2 text-bri-blue font-bold text-sm">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>5. MOsafety</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Jaminan keamanan dan perlindungan dari risiko kecelakaan tak terduga dimanapun dan kapanpun Anda berada.
+                    </p>
+                </div>
+
+                <!-- 6. MOtravelling -->
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    <div class="flex items-center gap-2 text-bri-blue font-bold text-sm">
+                        <i data-lucide="plane" class="w-4 h-4"></i>
+                        <span>6. MOtravelling</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Proteksi lengkap perjalanan wisata domestik maupun internasional dari risiko keterlambatan hingga kecelakaan.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeModiModal()" class="px-5 py-2.5 bg-bri-blue hover:bg-bri-darkBlue text-white font-bold rounded-xl text-xs transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail CoZy -->
+    <div id="cozyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-1 bg-orange-100 text-bri-orange rounded-lg font-black text-xl">
+                        CoZy
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-800">Corporate Eazy (CoZy)</h3>
+                        <p class="text-xs text-slate-500">Asuransi Kumpulan BRI Life</p>
+                    </div>
+                </div>
+                <button onclick="closeCozyModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-700 leading-relaxed">
+                <div class="p-4 bg-orange-50/80 border border-orange-200/80 rounded-xl space-y-2">
+                    <p class="text-xs font-medium text-slate-800 leading-relaxed">
+                        Asuransi Corporate Eazy (COZY) dari BRI Life adalah asuransi kumpulan untuk minimal 50 peserta dengan premi terjangkau mulai dari Rp1.000 per orang. Produk ini memberikan perlindungan jiwa dan kecelakaan dengan masa asuransi fleksibel dari 1 hari hingga 1 tahun.
+                    </p>
+                </div>
+
+                <div class="space-y-2 pt-1">
+                    <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">Manfaat & Pertanggungan:</h5>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Manfaat utamanya meliputi santunan meninggal dunia dan cacat tetap total akibat kecelakaan maupun penyakit, serta manfaat tambahan berupa perawatan medis dan penanganan penyakit gangguan mental.
+                    </p>
+                </div>
+
+                <div class="space-y-2 pt-1 border-t border-slate-100">
+                    <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">Ketentuan Klaim & Pengecualian:</h5>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Pengajuan klaim dilakukan secara reimbursement, dengan ketentuan masa tunggu tertentu tergantung jenis manfaatnya. Perlindungan ini tidak berlaku untuk kondisi tertentu seperti bunuh diri, pelanggaran hukum, perang, aktivitas ekstrem, atau penyakit yang sudah diderita sebelum polis aktif (pre-existing conditions).
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeCozyModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail AM Jiwa UMi -->
+    <div id="umiModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-lg font-black text-xl">
+                        AM Jiwa UMi
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-extrabold text-slate-800">Asuransi Mikro Jiwa UMi</h3>
+                        <p class="text-xs text-slate-500">Perlindungan Ekosistem Ultra Mikro</p>
+                    </div>
+                </div>
+                <button onclick="closeUmiModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-700 leading-relaxed">
+                <div class="p-4 bg-emerald-50/80 border border-emerald-200/80 rounded-xl space-y-2">
+                    <p class="text-xs font-medium text-slate-800 leading-relaxed">
+                        AM Jiwa UMi dari PT Asuransi BRI Life adalah produk asuransi jiwa mikro yang memberikan perlindungan atas risiko meninggal dunia karena sebab apa pun selama masa asuransi.
+                    </p>
+                </div>
+
+                <div class="space-y-2 pt-1">
+                    <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">Pilihan Kontribusi & Santunan:</h5>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Produk ini menawarkan dua pilihan kontribusi terjangkau, yaitu AM Jiwa UMi 20 dengan premi Rp20.000 per tahun untuk santunan sebesar Rp2.000.000, serta AM Jiwa UMi 40 dengan premi Rp40.000 per tahun untuk santunan sebesar Rp4.000.000.
+                    </p>
+                </div>
+
+                <div class="space-y-2 pt-1 border-t border-slate-100">
+                    <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">Pengajuan Klaim & Pengecualian:</h5>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Pengajuan klaim asuransi dapat diproses dengan melengkapi dokumen berupa bukti kepesertaan, KTP peserta dan penerima manfaat, surat keterangan kematian dari kelurahan atau instansi setempat, surat keterangan dokter/kepolisian (jika akibat kecelakaan), serta fotokopi Kartu Keluarga atau Surat Keterangan Ahli Waris. Namun, pertanggungan tidak berlaku untuk kondisi pengecualian seperti bunuh diri, tindak kejahatan/hukuman mati, penyakit akibat HIV/AIDS, semua jenis kanker, penyalahgunaan narkotika, maupun penugasan militer/kepolisian.
+                    </p>
+                </div>
+
+                <div class="p-3 bg-slate-100 rounded-xl space-y-1 text-slate-700 border border-slate-200">
+                    <h5 class="font-bold uppercase text-[11px] text-slate-800">Layanan Informasi & Klaim:</h5>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Layanan klaim dan informasi lebih lanjut dapat diakses melalui WhatsApp (<strong>0811-9350-087</strong>), email (<strong>CS@brilife.co.id</strong>), telepon (<strong>1500087</strong>), atau staf BRI Life terdekat.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeUmiModal()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal SOP Edukasi Gagal Debet -->
+    <div id="eduModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-2xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <h3 class="text-lg font-bold text-slate-800">Standar Operasional Prosedur (SOP) Gagal Debet</h3>
+                <button onclick="closeEducationModal()" class="text-slate-400 hover:text-slate-600 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <div class="space-y-4 text-xs text-slate-600 leading-relaxed">
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <h5 class="font-bold text-bri-blue mb-1">Tahap 1: Notifikasi Sistem & Avisasi</h5>
+                    <p>Sistem mengirimkan SMS/WhatsApp peringatan otomatis H-3 sebelum tanggal jadwal penarikan auto-debet.</p>
+                </div>
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-100">
+                    <h5 class="font-bold text-amber-800 mb-1">Tahap 2: Penanganan H+1 Gagal Debet</h5>
+                    <p>Petugas ARO / Customer Service melakukan verifikasi status rekening nasabah (apakah saldo kurang atau rekening pasif).</p>
+                </div>
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                    <h5 class="font-bold text-emerald-800 mb-1">Tahap 3: Pendebetan Ulang / Alternatif BRImo</h5>
+                    <p>Memberikan petunjuk pembayaran manual via aplikasi BRImo atau menjadwalkan ulang *second debet try* pada tanggal 15 / 25 bulan berjalan.</p>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeEducationModal()" class="px-4 py-2 bg-slate-800 text-white font-semibold rounded-lg text-xs">
+                    Selesai Membaca
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Program Internal ARO -->
+    <div id="programDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl w-full max-w-xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <div class="flex items-center gap-3">
+                    <div id="programModalIcon" class="p-2.5 rounded-xl bg-blue-50 text-bri-blue">
+                        <i data-lucide="target" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 id="programModalTitle" class="text-lg font-extrabold text-slate-800">Detail Program ARO</h3>
+                        <p id="programModalSubtitle" class="text-xs text-slate-500">Program Internal Divisi Alternate</p>
+                    </div>
+                </div>
+                <button onclick="closeProgramDetailModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="programModalBody" class="space-y-4 text-xs text-slate-700 leading-relaxed">
+                <!-- Dynamic Content via JS -->
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="closeProgramDetailModal()" class="px-5 py-2.5 bg-bri-blue hover:bg-bri-darkBlue text-white font-bold rounded-xl text-xs transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Data Lengkap Penugasan ARO di 53 Cabang PNM
+        const dummyAroData = [
+            { no: 1, cabang: "PNM Makassar", aro: "Muhammad Reyhan Primarhesa", kelas: "Utama", status: "Aktif" },
+            { no: 2, cabang: "PNM Bandung", aro: "Dian Hendiana", kelas: "Utama", status: "Aktif" },
+            { no: 3, cabang: "PNM Tasikmalaya", aro: "Akhsazia Qolbi Reza Musyarip", kelas: "Utama", status: "Aktif" },
+            { no: 4, cabang: "PNM Pekanbaru", aro: "Bunga Laraditya Yahya", kelas: "Utama", status: "Aktif" },
+            { no: 5, cabang: "PNM Medan", aro: "Putri Nur Elvadita", kelas: "Utama", status: "Aktif" },
+            { no: 6, cabang: "PNM Surabaya", aro: "Rizki Fernanda", kelas: "Utama", status: "Aktif" },
+            { no: 7, cabang: "PNM Lampung", aro: "Gilang Perkasa", kelas: "Utama", status: "Aktif" },
+            { no: 8, cabang: "PNM Palembang", aro: "Muhammad Yurisyah", kelas: "Utama", status: "Aktif" },
+            { no: 9, cabang: "PNM Tegal", aro: "Rangga Nugraha", kelas: "Utama", status: "Aktif" },
+            { no: 10, cabang: "PNM Padang", aro: "Nur Alfath Ramadhana", kelas: "Utama", status: "Aktif" },
+            { no: 11, cabang: "PNM Denpasar", aro: "Nevin Cantika Dias", kelas: "Utama", status: "Aktif" },
+            { no: 12, cabang: "PNM Jember", aro: "Yuddy Pramana", kelas: "Utama", status: "Aktif" },
+            { no: 13, cabang: "PNM Lamongan", aro: "Dinda Ajeng Setya Wulan", kelas: "Madya", status: "Aktif" },
+            { no: 14, cabang: "PNM Bekasi", aro: "Dhona Arbi Nurlela", kelas: "Madya", status: "Aktif" },
+            { no: 15, cabang: "PNM Sukabumi", aro: "Ihwan Sukmana", kelas: "Madya", status: "Aktif" },
+            { no: 16, cabang: "PNM Garut", aro: "Ashila Ghassani Syadza", kelas: "Madya", status: "Aktif" },
+            { no: 17, cabang: "PNM Bogor", aro: "Nashirudin Annabhan", kelas: "Madya", status: "Aktif" },
+            { no: 18, cabang: "PNM Cirebon", aro: "Irfan Maulana", kelas: "Madya", status: "Aktif" },
+            { no: 19, cabang: "PNM Mojokerto", aro: "Auralia Sakinah Lestari", kelas: "Madya", status: "Aktif" },
+            { no: 20, cabang: "PNM Serang", aro: "Muh Rifki Halim", kelas: "Madya", status: "Aktif" },
+            { no: 21, cabang: "PNM Banyuwangi", aro: "Muhammad Gardim", kelas: "Madya", status: "Aktif" },
+            { no: 22, cabang: "PNM Purwokerto", aro: "Fivi Yunitasari", kelas: "Madya", status: "Aktif" },
+            { no: 23, cabang: "PNM Banjarnegara", aro: "Lutfiyah Ramania Arrazaq", kelas: "Madya", status: "Aktif" },
+            { no: 24, cabang: "PNM Indramayu", aro: "Rachmat Dwi Aprilianto", kelas: "Madya", status: "Aktif" },
+            { no: 25, cabang: "PNM Jakarta", aro: "Rina Permatasari", kelas: "Madya", status: "Aktif" },
+            { no: 26, cabang: "PNM Jambi", aro: "Eriko Berliano", kelas: "Madya", status: "Aktif" },
+            { no: 27, cabang: "PNM Tangerang", aro: "Kamiliya Rohadatus Syafa", kelas: "Madya", status: "Aktif" },
+            { no: 28, cabang: "PNM Pematang Siantar", aro: "Aida Malan Sari", kelas: "Madya", status: "Aktif" },
+            { no: 29, cabang: "PNM Palu", aro: "Yuni Wulan Andani", kelas: "Madya", status: "Aktif" },
+            { no: 30, cabang: "PNM Malang", aro: "Hanis Fitriyah", kelas: "Madya", status: "Aktif" },
+            { no: 31, cabang: "PNM Probolinggo", aro: "Qonita Putri Febrianti", kelas: "Madya", status: "Aktif" },
+            { no: 32, cabang: "PNM Kabanjahe", aro: "Romanius Halawa", kelas: "Madya", status: "Aktif" },
+            { no: 33, cabang: "PNM Pati", aro: "Andhika Hendrawan", kelas: "Madya", status: "Aktif" },
+            { no: 34, cabang: "PNM Depok", aro: "Nadila", kelas: "Pratama", status: "Aktif" },
+            { no: 35, cabang: "PNM Yogyakarta", aro: "Dinar Agni Pratama Putra", kelas: "Pratama", status: "Aktif" },
+            { no: 36, cabang: "PNM Balikpapan", aro: "Mirzha Yuliardi", kelas: "Pratama", status: "Aktif" },
+            { no: 37, cabang: "PNM Blitar", aro: "Melinda Nur Cahyani", kelas: "Pratama", status: "Aktif" },
+            { no: 38, cabang: "PNM Bojonegoro", aro: "Melinda Nur Cahyani", kelas: "Pratama", status: "Aktif" },
+            { no: 39, cabang: "PNM Bau Bau", aro: "Rizka Damayanti", kelas: "Pratama", status: "Aktif" },
+            { no: 40, cabang: "PNM Palopo", aro: "Yuni Wulan Andani", kelas: "Pratama", status: "Aktif" },
+            { no: 41, cabang: "PNM Kediri", aro: "Nur Andini A", kelas: "Pratama", status: "Aktif" },
+            { no: 42, cabang: "PNM Magelang", aro: "Angellina Asyivadibrata", kelas: "Pratama", status: "Aktif" },
+            { no: 43, cabang: "PNM Banjarmasin", aro: "Mirzha Yuliardi", kelas: "Pratama", status: "Aktif" },
+            { no: 44, cabang: "PNM Tulungagung", aro: "Nur Andini A", kelas: "Pratama", status: "Aktif" },
+            { no: 45, cabang: "PNM Solo", aro: "Kristiani Anugrah", kelas: "Pratama", status: "Aktif" },
+            { no: 46, cabang: "PNM Kendari", aro: "Rizka Damayanti", kelas: "Pratama", status: "Aktif" },
+            { no: 47, cabang: "PNM Ambon", aro: "Nalaratih Achmad", kelas: "Pratama", status: "Aktif" },
+            { no: 48, cabang: "PNM Tarakan", aro: "Mirzha Yuliardi", kelas: "Pratama", status: "Aktif" },
+            { no: 49, cabang: "PNM Manado", aro: "Andriansyah", kelas: "Pratama", status: "Aktif" },
+            { no: 50, cabang: "PNM Bangka Belitung", aro: "Eriko Berliano", kelas: "Pratama", status: "Aktif" },
+            { no: 51, cabang: "PNM Wonogiri", aro: "Chris Maudiansyah", kelas: "Pratama", status: "Aktif" },
+            { no: 52, cabang: "PNM Madiun", aro: "Chris Maudiansyah", kelas: "Pratama", status: "Aktif" },
+            { no: 53, cabang: "PNM Subang", aro: "Rina Permatasari", kelas: "Pratama", status: "Aktif" }
+        ];
+
+        // Program Details Data
+        const programDetailsData = {
+            referral: {
+                title: "Reward Referral Asuransi 2026",
+                subtitle: "Semangat Pagi, ARO Fighters!",
+                icon: "gift",
+                iconBg: "bg-blue-50 text-bri-blue",
+                content: `
+                    <div class="p-4 bg-gradient-to-r from-bri-blue to-blue-800 text-white rounded-xl space-y-3 shadow-md">
+                        <p class="font-black text-sm tracking-wide text-amber-300 uppercase">
+                            🔥 SEMANGAT PAGI, ARO FIGHTERS! SAATNYA JEMPUT REWARD TERBESAR! 🚀💰
+                        </p>
+                        <p class="text-xs text-blue-100 font-medium leading-relaxed">
+                            Ada kabar seru buat Unit Mekaar! 💥
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-xl space-y-2">
+                        <p class="text-xs font-extrabold text-slate-800">
+                            Program Reward Referral Asuransi 2026 hadir dengan total hadiah hingga <span class="text-bri-orange text-sm font-black">Rp3,7 MILIAR! 🤩</span>
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 pt-1">
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-800 border-b pb-1">
+                            <span>🎯 Caranya?</span>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Pastikan <strong>Success Rate Unit minimal 90%</strong> dan raih kesempatan mendapatkan berbagai reward menarik setiap triwulan!
+                        </p>
+
+                        <div class="grid grid-cols-1 gap-2 pt-1">
+                            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-3">
+                                <span class="text-lg">💰</span>
+                                <div>
+                                    <h6 class="text-xs font-bold text-emerald-800">REWARD TUNAI</h6>
+                                    <p class="text-[11px] text-emerald-700 font-medium">Hingga Rp5 JUTA!</p>
+                                </div>
+                            </div>
+
+                            <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-lg">✈️</span>
+                                    <h6 class="text-xs font-bold text-bri-blue">REWARD WISATA</h6>
+                                </div>
+                                <ul class="text-[11px] text-slate-600 space-y-1 pl-6 list-disc">
+                                    <li>🌍 <strong>Umroh / Wisata Luar Negeri</strong></li>
+                                    <li>🏝️ <strong>Wisata Lokal</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <p class="text-xs font-semibold text-slate-700 italic text-center pt-1">
+                            ✨ Jadi, jangan cuma kejar target—kejar juga reward-nya!
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-700 leading-relaxed">
+                        <p>
+                            Yuk, jaga performa unit, tingkatkan Success Rate, dan amankan kesempatanmu untuk jadi bagian dari para pemenang <strong>Reward Referral Asuransi 2026! 🏆🔥</strong>
+                        </p>
+                        <p class="font-extrabold text-bri-blue text-center pt-1">
+                            Gas terus, ARO Fighters! Target tercapai, reward pun menanti! 💪🏻🚀
+                        </p>
+                    </div>
+                `
+            },
+            prima: {
+                title: "Reward Prima 2026",
+                subtitle: "Penghargaan Pelayanan Prima & Retensi Polis",
+                icon: "star",
+                iconBg: "bg-amber-50 text-amber-600",
+                content: `
+                    <div class="p-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl space-y-3 shadow-md">
+                        <p class="font-black text-sm tracking-wide text-amber-100 uppercase">
+                            👋🏻 Semangat pagi, rekan-rekan ARO!
+                        </p>
+                        <p class="text-xs text-amber-50 font-medium leading-relaxed">
+                            Izin share informasi Reward Prima 2026 untuk Program Referral Insentif Mekaar Asuransi BRI Life.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-3">
+                        <div class="flex items-start gap-3">
+                            <span class="text-xl">🏆</span>
+                            <p class="text-xs font-bold text-slate-800 leading-relaxed">
+                                Ada kesempatan mendapatkan <span class="text-amber-600 text-sm font-extrabold">reward Rp2.000.000</span> bagi MRM & KAB terbaik, serta <span class="text-amber-600 text-sm font-extrabold">bonus reward Rp500.000</span> sesuai dengan pencapaian SR penjualan produk AM40.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-slate-700 leading-relaxed">
+                        <p>
+                            Detail periode, kuota, pemenang, syarat, dan ketentuannya bisa rekan-rekan cek di flyer terlampir yaa☺️.
+                        </p>
+                        <p class="font-extrabold text-bri-blue text-center pt-2">
+                            Yuk, manfaatkan program ini dan semangat tingkatkan referral di lapangan! 💪🏻🔥
+                        </p>
+                    </div>
+                `
+            },
+            companion: {
+                title: "ARO Companion",
+                subtitle: "Mentorship & Pendampingan Intensif",
+                icon: "user-check",
+                iconBg: "bg-indigo-50 text-indigo-600",
+                content: `
+                    <div class="p-4 bg-gradient-to-r from-indigo-600 to-blue-700 text-white rounded-xl space-y-3 shadow-md">
+                        <p class="font-black text-sm tracking-wide text-amber-300 uppercase">
+                            🏆✨ ARO COMPANION 2026: SIAP JADI ARO TERBAIK?
+                        </p>
+                        <p class="text-xs text-indigo-100 font-medium leading-relaxed">
+                            Selamat pagi, teman-teman ARO! 👋🏻
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2">
+                        <p class="text-xs font-semibold text-slate-800 leading-relaxed">
+                            Punya performa terbaik sekaligus berkesempatan <strong>TRIP BARENG PNM SELINDO</strong>? Bisa banget! 🔥 <strong>ARO Companion 2026</strong> hadir untuk mengapresiasi ARO dengan pencapaian terbaik sekaligus memperkuat sinergi dan kolaborasi sebagai mitra bisnis PNM. 🤝💙 
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center gap-2 text-xs font-bold text-bri-blue">
+                        <i data-lucide="calendar" class="w-4 h-4 text-bri-blue flex-shrink-0"></i>
+                        <span>📅 Periode: 1 Januari – 30 November 2026</span>
+                    </div>
+
+                    <div class="space-y-2 pt-1">
+                        <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                            <i data-lucide="target" class="w-4 h-4 text-bri-orange"></i>
+                            🎯 Wajib penuhi 2 kriteria:
+                        </h5>
+                        
+                        <div class="grid grid-cols-1 gap-2">
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                                <h6 class="text-xs font-bold text-slate-800">1️⃣ Penetrasi seluruh unit &gt;90%</h6>
+                                <p class="text-[11px] text-slate-600">Seluruh unit dalam cabang harus mencapai minimal 90%.</p>
+                            </div>
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                                <h6 class="text-xs font-bold text-slate-800">2️⃣ Growth Premi 40 Ribu tertinggi</h6>
+                                <p class="text-[11px] text-slate-600">Raih pencapaian tertinggi se-PNM Selindo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 font-medium flex items-start gap-2">
+                        <span class="text-base leading-none">⚠️</span>
+                        <span><strong>Ingat!</strong> Kedua syarat wajib terpenuhi untuk masuk kriteria pemenang.</span>
+                    </div>
+
+                    <div class="space-y-2 pt-1">
+                        <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">
+                            🏆 Akan dipilih 3 ARO terbaik dengan pencapaian tertinggi untuk mendapatkan kesempatan menikmati:
+                        </h5>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-center font-bold text-emerald-800 text-xs flex items-center justify-center gap-1.5">
+                                <span>🕋</span> Trip Umroh
+                            </div>
+                            <div class="p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-center font-bold text-bri-blue text-xs flex items-center justify-center gap-1.5">
+                                <span>🌍</span> Trip Luar Negeri
+                            </div>
+                            <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-center font-bold text-amber-800 text-xs flex items-center justify-center gap-1.5">
+                                <span>🏝️</span> Trip Domestik
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-100 border border-slate-200 rounded-xl text-xs text-center font-bold text-bri-blue">
+                        Yuk, tingkatkan penetrasi, maksimalkan growth Premi 40 Ribu, dan bangun kolaborasi terbaik bersama PNM! 🚀
+                    </div>
+                `
+            },
+            champions: {
+                title: "ARO Champions",
+                subtitle: "Kompetisi Kinerja Triwulanan",
+                icon: "trophy",
+                iconBg: "bg-orange-50 text-bri-orange",
+                content: `
+                    <div class="p-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl space-y-3 shadow-md">
+                        <p class="font-black text-sm tracking-wide text-amber-200 uppercase">
+                            🏆 ARO CHAMPIONS 2026: SIAPA YANG PALING SULTAN DARI SELURUH ARO?
+                        </p>
+                        <p class="text-xs text-orange-100 font-medium leading-relaxed">
+                            Halo, ARO-ARO Kece dan Hebat di Seluruh Indonesia! 👋🏻🔥
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-xl space-y-2">
+                        <p class="text-xs font-bold text-slate-800 leading-relaxed">
+                            Bekerja keras memang luar biasa, tapi diapresiasi atas hasil kerja keras itu rasanya pasti jauh lebih manis, kan? 😉✨
+                        </p>
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            Nah, di tahun 2026 ini, <strong>ARO CHAMPIONS</strong> kembali hadir sebagai bentuk apresiasi tertinggi untuk kamu yang nggak cuma sekadar kerja, tapi juga berhasil mencetak prestasi spektakuler dan menginspirasi ARO lainnya! 🚀💥
+                        </p>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center gap-2 text-xs font-bold text-bri-blue">
+                        <i data-lucide="calendar" class="w-4 h-4 text-bri-blue flex-shrink-0"></i>
+                        <span>📅 Periode Program: 1 Januari – 31 Desember 2026</span>
+                    </div>
+
+                    <div class="space-y-3 pt-1">
+                        <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                            <i data-lucide="award" class="w-4 h-4 text-bri-orange"></i>
+                            Kategori Pemenang ARO Champions:
+                        </h5>
+
+                        <div class="grid grid-cols-1 gap-2">
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <h6 class="text-xs font-bold text-slate-800">1. BEST ARO KELAS CABANG UTAMA</h6>
+                                    <span class="px-2 py-0.5 bg-blue-50 text-bri-blue font-extrabold text-[10px] rounded-full border border-blue-200">1 Orang Pemenang</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600">Terbaik di kategori Kelas Cabang Utama.</p>
+                            </div>
+
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <h6 class="text-xs font-bold text-slate-800">2. BEST ARO KELAS CABANG MADYA</h6>
+                                    <span class="px-2 py-0.5 bg-amber-50 text-amber-700 font-extrabold text-[10px] rounded-full border border-amber-200">1 Orang Pemenang</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600">Terbaik di kategori Kelas Cabang Madya.</p>
+                            </div>
+
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <h6 class="text-xs font-bold text-slate-800">3. BEST ARO KELAS CABANG PRATAMA</h6>
+                                    <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-extrabold text-[10px] rounded-full border border-emerald-200">1 Orang Pemenang</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600">Terbaik di kategori Kelas Cabang Pratama.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
+                        <h5 class="text-xs font-bold text-emerald-900 flex items-center gap-1.5 uppercase tracking-wide">
+                            🎁 REWARD SPESIAL ARO CHAMPIONS 🎁
+                        </h5>
+                        <p class="text-xs text-emerald-800 leading-relaxed font-semibold">
+                            Masing-masing pemenang akan mendapatkan <span class="text-emerald-700 text-sm font-black underline">UANG TUNAI SEBESAR RP 5.000.000,-</span> dan sertifikat penghargaan! 💵🏅
+                        </p>
+                    </div>
+
+                    <div class="space-y-2 pt-1 border-t border-slate-100">
+                        <h5 class="font-bold text-slate-800 uppercase tracking-wider text-[11px]">🎯 Apa Saja Kriteria Penilaiannya?</h5>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Penilaian akan dihitung berdasarkan kombinasi dari:
+                        </p>
+                        <ul class="space-y-1.5 text-xs text-slate-700 pl-4 list-disc font-medium">
+                            <li><strong>Penetrasi Unit (SLA)</strong></li>
+                            <li><strong>Pencapaian Premi Asuransi (AM 20 & AM 40)</strong></li>
+                            <li><strong>Persistensi Polis / Retensi Polis Gagal Debet</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 bg-slate-100 border border-slate-200 rounded-xl space-y-2 text-xs text-center font-bold text-bri-blue">
+                        <p>
+                            Siapkan strategi terbaikmu, konsisten memberikan layanan yang luar biasa, dan jadilah yang terdepan di kelas cabangmu! 🌟🚀
+                        </p>
+                        <p class="text-bri-orange font-black pt-1">
+                            Saatnya tunjukkan perfoma terbaikmu dan amankan gelar ARO CHAMPIONS 2026! 🔥💪🏻
+                        </p>
+                    </div>
+                `
+            },
+            cashreward: {
+                title: "ARO Cash Reward",
+                subtitle: "Ubah Koneksi Komunitas Jadi Cuan",
+                icon: "banknote",
+                iconBg: "bg-emerald-50 text-emerald-600",
+                content: `
+                    <div class="p-4 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-xl space-y-2 shadow-md">
+                        <p class="font-black text-sm tracking-wide text-amber-300 uppercase">
+                            🎾🏃🏻‍♂️ HOBI & KOMUNITASMU BISA JADI SUMBER CUAN! 💰🔥
+                        </p>
+                        <p class="text-xs text-emerald-100 font-medium leading-relaxed">
+                            Halo, Tim ARO! 👋🏻<br>
+                            Punya koneksi dengan komunitas lari, sepeda, padel, atau event olahraga lainnya? Jangan cuma jadi relasi—ubah koneksimu jadi peluang dan dapatkan cash reward setiap bulan! 🚀
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-2">
+                        <h5 class="font-bold text-emerald-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                            🎯 Misi ARO:
+                        </h5>
+                        <p class="text-xs text-slate-700 leading-relaxed">
+                            Referensikan Penyelenggara Event / Race Management untuk bekerja sama dalam pemasaran produk digital ProSport hingga terbit PKS dan polis.
+                        </p>
+                        <p class="text-xs font-bold text-emerald-800 pt-1">
+                            💰 Makin banyak peluang, makin besar kesempatan reward!
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-2 text-xs text-slate-800">
+                        <div class="flex items-center gap-2 font-black text-amber-900 text-sm">
+                            <span>🎁 Cash Reward Rp1.000.000,- / Bulan</span>
+                        </div>
+                        <ul class="space-y-1.5 text-slate-700 pl-4 list-disc font-medium pt-1">
+                            <li><strong>📅 Periode:</strong> Februari – Desember 2026</li>
+                            <li><strong>👥 Target:</strong> Minimal 1.000 peserta atau 1.000 polis per bulan</li>
+                            <li><strong>🏃🏻‍♂️ Event:</strong> Bisa diakumulasikan dari beberapa event dalam 1 bulan</li>
+                            <li><strong>✨ Ketentuan:</strong> Tanpa batasan kuota bulanan!</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs text-center leading-relaxed">
+                        <p class="text-slate-700 font-medium">
+                            Yuk, mulai scouting komunitas & event olahraga di sekitar kamu! 🔍
+                        </p>
+                        <p class="font-bold text-slate-800">
+                            Siapa tahu, satu koneksi hari ini bisa jadi cuan setiap bulan! 🤑🔥
+                        </p>
+                        <p class="font-black text-bri-blue text-xs uppercase tracking-wide pt-1">
+                            Bangun koneksi. Buka peluang. Raih reward bersama ARO Digital! 🚀
+                        </p>
+                    </div>
+                `
+            }
+        };
+
+        // Render ARO Table Content
+        function renderAroTable(data) {
+            const tbody = document.getElementById('aroTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-400 text-xs font-semibold">
+                            Tidak ada data ARO yang sesuai dengan kriteria pencarian.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach((item, index) => {
+                let badgeClass = 'bg-slate-100 text-slate-600 border-slate-200';
+                if (item.kelas === 'Utama') badgeClass = 'bg-blue-50 text-bri-blue border-blue-200';
+                if (item.kelas === 'Madya') badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+                if (item.kelas === 'Pratama') badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors border-b border-slate-100';
+                tr.innerHTML = `
+                    <td class="p-4 text-center font-bold text-slate-400 text-xs">${item.no}</td>
+                    <td class="p-4 font-bold text-slate-800">${item.cabang}</td>
+                    <td class="p-4 font-semibold text-slate-700 flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-full bg-blue-50 text-bri-blue flex items-center justify-center text-[10px] font-extrabold border border-blue-100">
+                            ${item.aro.charAt(0)}
+                        </div>
+                        ${item.aro}
+                    </td>
+                    <td class="p-4 text-xs font-medium text-slate-600">
+                        <span class="px-2.5 py-1 text-[11px] font-bold rounded-full border ${badgeClass}">
+                            ${item.kelas}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            ${item.status || 'Aktif'}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filter Table Function
+        function filterAroTable() {
+            const searchVal = document.getElementById('aroSearchInput').value.toLowerCase();
+            const statusVal = document.getElementById('aroStatusFilter').value;
+
+            const filtered = dummyAroData.filter(item => {
+                const matchesSearch = item.cabang.toLowerCase().includes(searchVal) || item.aro.toLowerCase().includes(searchVal);
+                const matchesStatus = (statusVal === 'ALL') || (item.kelas === statusVal);
+                return matchesSearch && matchesStatus;
+            });
+
+            renderAroTable(filtered);
+        }
+
+        // Auth Tabs Toggle
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabLoginBtn = document.getElementById('tabLoginBtn');
+            const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabLoginBtn.className = "flex-1 py-3.5 text-sm font-bold text-bri-blue border-b-2 border-bri-blue bg-white transition-all flex items-center justify-center gap-2";
+                tabRegisterBtn.className = "flex-1 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-2";
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabRegisterBtn.className = "flex-1 py-3.5 text-sm font-bold text-bri-orange border-b-2 border-bri-orange bg-white transition-all flex items-center justify-center gap-2";
+                tabLoginBtn.className = "flex-1 py-3.5 text-sm font-semibold text-slate-500 hover:text-slate-800 transition-all flex items-center justify-center gap-2";
+            }
+        }
+
+        // Handle Login Submission
+        function handleLogin(event) {
+            event.preventDefault();
+            const loginId = document.getElementById('loginId').value;
+            
+            document.getElementById('userNameDisplay').textContent = loginId || "User Alternate";
+            document.getElementById('mobileUserNameDisplay').textContent = loginId || "User Alternate";
+            document.getElementById('userAvatar').textContent = (loginId ? loginId.substring(0, 2) : "UA").toUpperCase();
+            
+            document.getElementById('authPage').classList.add('hidden');
+            showNotification('Login berhasil! Selamat datang di Alt Hub Division.', 'success');
+        }
+
+        // Handle Register Submission
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById('regName').value;
+            
+            document.getElementById('userNameDisplay').textContent = name;
+            document.getElementById('mobileUserNameDisplay').textContent = name;
+            document.getElementById('userAvatar').textContent = name.substring(0, 2).toUpperCase();
+
+            document.getElementById('authPage').classList.add('hidden');
+            showNotification('Registrasi berhasil! Selamat datang di Alt Hub Division.', 'success');
+        }
+
+        // Logout Handle
+        function handleLogout() {
+            document.getElementById('authPage').classList.remove('hidden');
+            showNotification('Anda telah keluar dari sistem.', 'info');
+        }
+
+        // Switch Main Content Sections
+        function switchSection(secId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+            const targetSec = document.getElementById(secId);
+            if (targetSec) targetSec.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+                btn.className = "nav-tab-btn px-4 py-2 text-xs font-semibold text-slate-600 hover:text-bri-blue rounded-lg transition-all flex items-center gap-2";
+            });
+            const activeNavBtn = document.getElementById(`navBtn-${secId}`);
+            if (activeNavBtn) {
+                if (secId === 'canvaSec') {
+                    activeNavBtn.className = "nav-tab-btn px-4 py-2 text-xs font-bold rounded-lg text-rose-600 bg-white shadow-sm transition-all flex items-center gap-2";
+                } else {
+                    activeNavBtn.className = "nav-tab-btn px-4 py-2 text-xs font-bold rounded-lg text-bri-blue bg-white shadow-sm transition-all flex items-center gap-2";
+                }
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        // Notification Toast Handler
+        function showNotification(msg, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = msg;
+
+            if (type === 'success') {
+                toastIcon.className = "p-2 rounded-lg text-white bg-emerald-500";
+            } else if (type === 'error') {
+                toastIcon.className = "p-2 rounded-lg text-white bg-rose-500";
+            } else {
+                toastIcon.className = "p-2 rounded-lg text-white bg-bri-blue";
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 10);
+
+            setTimeout(() => {
+                closeToast();
+            }, 4000);
+        }
+
+        function closeToast() {
+            const toast = document.getElementById('toastNotification');
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 300);
+        }
+
+        // Modal Controllers
+        function openCanvaModal(title, url) {
+            document.getElementById('canvaModalTitle').textContent = `Canva: ${title}`;
+            document.getElementById('canvaLinkBtn').href = url;
+            document.getElementById('canvaModal').classList.remove('hidden');
+        }
+        function closeCanvaModal() {
+            document.getElementById('canvaModal').classList.add('hidden');
+        }
+
+        function openModiDetailModal() {
+            document.getElementById('modiModal').classList.remove('hidden');
+        }
+        function closeModiModal() {
+            document.getElementById('modiModal').classList.add('hidden');
+        }
+
+        function openCozyModal() {
+            document.getElementById('cozyModal').classList.remove('hidden');
+        }
+        function closeCozyModal() {
+            document.getElementById('cozyModal').classList.add('hidden');
+        }
+
+        function openUmiModal() {
+            document.getElementById('umiModal').classList.remove('hidden');
+        }
+        function closeUmiModal() {
+            document.getElementById('umiModal').classList.add('hidden');
+        }
+
+        function openEducationModal() {
+            document.getElementById('eduModal').classList.remove('hidden');
+        }
+        function closeEducationModal() {
+            document.getElementById('eduModal').classList.add('hidden');
+        }
+
+        // Program Detail Modal Opener
+        function openProgramDetailModal(key) {
+            const data = programDetailsData[key];
+            if (!data) return;
+
+            document.getElementById('programModalTitle').textContent = data.title;
+            document.getElementById('programModalSubtitle').textContent = data.subtitle;
+            
+            const iconContainer = document.getElementById('programModalIcon');
+            iconContainer.className = `p-2.5 rounded-xl ${data.iconBg}`;
+            iconContainer.innerHTML = `<i data-lucide="${data.icon}" class="w-6 h-6"></i>`;
+
+            document.getElementById('programModalBody').innerHTML = data.content;
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
+            document.getElementById('programDetailModal').classList.remove('hidden');
+        }
+
+        function closeProgramDetailModal() {
+            document.getElementById('programDetailModal').classList.add('hidden');
+        }
+
+        // On Document Loaded Initialization
+        window.onload = function() {
+            renderAroTable(dummyAroData);
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        };
+    </script>
+</body>
+</html>
